@@ -17,10 +17,11 @@ exports.list = (req, res) => {
 
 exports.create = async (req, res) => {
   const { description } = req.body;
-  const todo = new Todo({ description });
-  req.user.todos.push(todo);
 
   try {
+    if (!description || typeof description !== 'string') throw new Error('incorrect payload format, expected "description: <non-empty-string>"');
+    const todo = new Todo({ description });
+    req.user.todos.push(todo);
     await req.user.save();
     res.json({
       message: 'Todo added!',
@@ -29,7 +30,7 @@ exports.create = async (req, res) => {
     res
       .status(400)
       .json({
-        message: err,
+        message: err.toString(),
       });
   }
 };
@@ -42,6 +43,7 @@ exports.update = async (req, res) => {
   try {
     const todo = todos.id(id);
     if (!todo) throw new Error(`todo with id: ${id} doesn't exisit`);
+    if (completed === undefined || typeof completed !== 'boolean') throw new Error('incorrect payload format, expected "completed: <boolean>"');
     todo.set({ completed });
     await req.user.save();
     res.json({
