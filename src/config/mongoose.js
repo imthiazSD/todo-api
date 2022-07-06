@@ -16,6 +16,13 @@ if (env === 'development') {
   mongoose.set('debug', true);
 }
 
+mongoose.set('toJSON', {
+  virtuals: true,
+  transform: (doc, converted) => {
+    delete converted._id;
+  }
+});
+
 /**
  * Connect to mongo db
  *

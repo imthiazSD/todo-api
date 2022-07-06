@@ -7,6 +7,7 @@ const jwt = require('jwt-simple');
 const uuidv4 = require('uuid/v4');
 const APIError = require('../errors/api-error');
 const { env, jwtSecret, jwtExpirationInterval } = require('../../config/vars');
+const { todoSchema } = require('./todo.model');
 
 /**
 * User Roles
@@ -51,6 +52,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  todos: [todoSchema],
 }, {
   timestamps: true,
 });
@@ -93,7 +95,7 @@ userSchema.method({
 
   token() {
     const payload = {
-      exp: moment().add(jwtExpirationInterval, 'minutes').unix(),
+      exp: moment().add(jwtExpirationInterval, 'days').unix(),
       iat: moment().unix(),
       sub: this._id,
     };

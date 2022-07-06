@@ -17,6 +17,14 @@ const error = require('../api/middlewares/error');
 */
 const app = express();
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
+  next();
+});
+
 // request logging. dev: console | production: file
 app.use(morgan(logs));
 
@@ -44,7 +52,7 @@ passport.use('facebook', strategies.facebook);
 passport.use('google', strategies.google);
 
 // mount api v1 routes
-app.use('/v1', routes);
+app.use('/api/v1', routes);
 
 // if error is not an instanceOf APIError, convert it.
 app.use(error.converter);
